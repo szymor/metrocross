@@ -1,0 +1,192 @@
+
+SprRotoZoom_Render => passer les buffers en static !
+
+>>
+src : http://forums.libsdl.org/viewtopic.php?t=6310&sid=48af500d704eb2aa6a54cfd76f565968
+
+#if SDL_VERSION_ATLEAST(1,3,0)
+SDL_GL_SetSwapInterval(1);
+#else /* SDL_VERSION_ATLEAST(1,3,0) */
+#ifdef SDL_GL_SWAP_CONTROL
+SDL_GL_SetAttribute(SDL_GL_SWAP_CONTROL, 1);
+#else /* SDL_GL_SWAP_CONTROL */
+DEBUG("VSync unsupported on old SDL versions (before 1.2.10).");
+#endif /* SDL_GL_SWAP_CONTROL */
+#endif /* SDL_VERSION_ATLEAST(1,3,0) */
+<<
+http://www.mrericsir.com/blog/technology/accelerated-2d-graphics-with-opengl-and-sdl-part-1/
+
+
+
+
+.h :
+void Spr_DisplayOneNoList(u32 nSprNo, s32 nPosX, s32 nPosY);
+
+
+anims :
+ecrasement grosse cannette : chute ar 0 + chute ar 1 + plat
+chute arrière mur : chute ar 0 + chute ar 1 + chute ar 2
+atterrissage sur le dos : chute ar 2
+prise de pieds : chute av 0 + chute av 1 + chute av 2
+
+
+----
+
+
+
+bug : L17 : au début, cracker, on tombe sur un cracker, on saute sur place avec l'anim sur le dos. (ou laisser comme ça ?)
+
+optionnel/ m12 - attk sur joueur en super saut, si on passe en phase follow avant que le joueur atterrisse, on va tout de suite se barrer.
+
+optionnel/ m12 - //if mouse au sol ? pour laisser finir les sauts ? ou pas ?
+
+congratulations : arrivée funky (par le côté ?)
+
+
+
+
+
+time en rouge si < 10 sec. / Mais attention à la fin de niveau !
+
+
+scroll, décalage de 1 pixel quand écrasement (ou arrêt). => en fait, c'est à cause de l'affichage du héros. Revoir quand (ou plutôt "si") je corrigerai le scroll.
+
+
+-- freeze scroll : conserver l'espace entre le joueur et le scroll : death, plaques vertes...
+
+
+
+
+===============================================================================
+ok, en fait ça venait sûrement de l'init, j'avais oublié d'initialiser spdz et posz/ mice : on a l'impression que parfois elles font des super sauts... => quand on est en train de disparaitre dans le sol ? ou super saut ?
+non en fait, c'est parce qu'on atterit trop loin et qu'on ne déclenche pas le pitfall/ bug : almican sur pitfall, saut sur la canette, on rebondit.
+ok/ en cours / Revoir les temps, c'est trop long. Touver un calcul ? (c'est p'tet le 50/60 Hz qui fausse tout ?). (prendre 80% ?)
+ok/ en cours / Ralonger un peu les lvl : 13 et 21.
+ok/ king : le joueur est au sol, et le king tombe au lieu d'écraser le joueur. => pb, c'est parce que le joueur est encore dans l'anim fall back, et pas encore en gAnm_Hero_FallFront_End.
+ok/ king : joueur écrasé, le king chute. (peut-être pas tout le temps, à voir).
+ok/ king sur pitfall : donner la prio au pitfall.
+ok/ congratulations : timer
+ok/ => freinage automatique si joueur au sol et pas de stick.
+>
+joueur, voir absolument comment arrêter le joueur si on veut faire un stop.
+=> freiner si vitesse trop faible ?
+=> un coup dans la direction opposée ? (hmmmm... sûrement pas top).
+=> avancer à des vitesses définies par pas ? { 0, 0x80, 1x00, ... }
+<
+ok/ checksum levels
+ok/ checksum exe
+ok, bug entre le mst généré par le joueur ou par un mst/ bug : L2 : quand on lâche le skateboard, on en voit 2 avec un décalé (le sprite en plus). Quand on saute sans rien. Sur springboard, c'est nickel.
+ok/ bug : king, avance d'abord en X, c'est chiant. Le faire aller sur le Y du joueur d'abord.
+ok/ saut perilleux quand goal in sur niveau 4.
+ok/ bug : springboard sur une case verte, couper le slow down (ça accélère, mais pas autant que ça le devrait).
+ok > mst todo :
+ok/	e_Mst9_BigTire,
+ok/	e_Mst10_RedCube,
+ok/	e_Mst11_TelescopicWall,
+ok/	e_Mst12_GreenMouse,
+ok/	e_Mst13_ChessPiece,
+ok/	e_Mst14_Sign,
+<
+ok/ m8 (coke cans) : attente au départ, attente que le joueur ait bougé, pas le "go!".
+ok/ pose plastique sur goal niveau 4.
+ok/ ALL CLEAR sur le dernier GOAL IN. (probablement ligne 762).
+ok/ m12 - joueur : remuer le stick pour se libérer ?
+ok, dispo autour/ m12 - faire un compte pour que les souris fassent une file ? (ou se disposent à plusieurs endroits autour des pieds ?)
+ok/ m12 - suivi stoppe sur saut, faire aussi sauter la mouse ?
+ok/ m12 - player display l.1192 : faire ralentir l'anim aussi quand attrapé par m12.
+ok/ etincelles quand timer > 10 sec.
+ok/ m12 - sens du sprite.
+ok/ m12 - attraper le joueur
+ok/ m12 - suivre le joueur
+ok/ m12 - sauter avec le joueur quand suivi
+ok/ m12 - ralentir le joueur quand attrapé.
+ok/ m12 - death, obstacle, fin => libérer le joueur.
+non/ - Couper le late jump si joueur accroché par M12. => ou pas ?
+ok/ M12 - multiplicateur vitesse dans attaque
+ok/ M12 - dx ok, dy 2 fois trop loin.
+ok/ M12 - ombre pendant le saut.
+ok/ M12 - mvt : limiter le y.
+ok/ M12 - attention au +0x80 -0x80 en y toutes les frames quand monstre en face du joueur.
+ok/ m9 - faire le système pour ne pas retoucher tant que le perso est dans la zone de col.
+ok/ M13 - directions différentes pour knight et king, mais 8 pour chaque.
+ok/ M13 - empêcher de rentrer dans les murs [0-4]
+ok/ M13 - avance jusqu'au joueur, recul sur x cases.
+ok/ M13 - contacts
+ok (+ ou -, on coupe à l'atterrissage) / bug : cracker + speed-up, couper le speed-up quand atterrissage sur le dos !
+ok/ BUG : cracker + arrivée sur skate : on est en skate, mais coincé !!!
+ok >
+skateboard + springboard / pitfall, à l'init du saut, le skate disparait pendant 1 frame. (Enfin, ça dépend des fois, selon l'endroit de la liste des monstres où est rajouté la planche).
+=> en fait, il faudrait rajouter le nouveau monstre en bout de chaîne pour qu'il soit forcément traité.
+==> ou alors afficher le sprite pendant une frame au moment ou on le quitte.
+solution ? : Faire un display sprite dans l'init si phase "go away" ? => OUI !
+<
+ok/ ralentir le speed-up jusqu'à speed max quand fini au lieu de couper net.
+ok/ BUG : Si speed-up et qu'on avance à fond, puis qu'on ne touche plus la touche droite, on reste à fond !
+ok/ bug : speed-up + super jump, ne pas cumuler les vitesses !
+ok/ bug : hurdle, chute sur un cracker ou springboard, on peut déclencher le super saut.
+ok/ death => il faut absolument marquer "game over" qqpart. Peut-être au moment de la transition squelette > cramé ?
+ok/ hi-score entry : timer
+ok/ hi-score display : timer
+ok/ main menu : timer
+ok/ accélérer les cubes (m10).
+ok/ joueur : saut depuis une case verte, rester au ralenti.
+ok/ switch /nogl
+ok/ bug : écran congrats : hi-score revient à la valeur précédente (normal, le nouveau score n'est pas encore dans la table).
+Ok/ >
+total des compteurs des 3 premiers niveaux quand bonus temps.
+ready : 3 rounds précédents affichés (bleu)
+set : total = xxx (bleu)
+go : time xxx + xxx (jaune)
+<
+ok, refait/ M3 - cracker : mettre le late jump en place aussi.
+ok/ M2 - springboard : trouver un truc pour qu'on puisse sauter si on appuie sur le bouton. Là, il faut absolument arriver avec le bouton enfoncé. => mettre un compteur de 8 frames, et si saut, duper saut ?
+ok/ M8 - coke can : bounce front/back.
+ok/ M11 : telescopic wall : init a des hauteurs différentes.
+ok/ telescopic wall : il va probablement falloir un player last x et y. (spd x et y ne suffiront pas, je crois).
+ok/ telescopic wall >
+// Recul.
+gGame.nPlayerSpdX = -0x400;//-0x100;	// faire un min/max ?
+#define	PLYR_SPDX_NORM_MAX	(0x400)		// Vitesse max normale. (ST)
+=> car arrivée lente, ressemble à une éjection.
+<
+ok/ mst 7 : s'occuper des anims !
+ok/ mst 7 : anim cannette pendant le kick.
+ok/ mst 7 : sfx écrasement.
+ok/ + e_Sfx_Go quand on passe la ligne d'arrivée, ça masquera la coupure du ym.
+ok/ mst7 kick : spd, petit boost si speed-up ?
+ok/ mst7 kick : todo : dégagement quand trop au bord de l'écran.
+ok/ mst7 kick : green : dégager vers le bas à fond.
+ok/ mst7 kick : shoot petite cannette : dist = 6 cases. (1 rebond). Départ très speed, peut-être 32 pixels.
+ok/ Tester le réarmage dans : Mst4_Main_Pitfall
+	si ok, le rajouter au cracker aussi (ou le laisser armé tout le temps ?).
+	ou laisser armé tt le temps le pitfall aussi ?
+ok/ void Game_Player_FootBumpInit(void)
+ok/ void Game_Player_FallFrontInit(void)
+ok/ saut prise de pieds, générique pour plein d'ennemis. => e_Spr_Hero_FallFront +0 / +1 / +2 	=> enchaîne sur run quand contact avec le sol.
+ok/ roulé boulé sur fence. => e_Spr_Hero_Fly1 +0 / +1 / +2 / e_Spr_Hero_FallBack +2
+ok/ cases vertes : limiter aussi la vitesse pendant le recul !
+ok/ peut-être coller la bande de sol en bas APRES l'affichage des sprites.
+ok/ gfx : réduire zone de col cannette bleue, 2 ou 3 pixels sur le haut.
+ok/ gfx : héros écrasé, à décaler vers le bas.
+prios + 16 * ombre 0 * écrasé 8 / écrasement : priorité du héros. Le passer en dessous. peut-être faire -16 ?
+ok/ coke can : faire anim flat qui va sur flat2 (écrasé tout court). Quand set, si key = flat, mettre anim flat2 (=> re-flat). Sinon flat.
+ok/ pitfall : saut à la sortie.
+ok/ priorité sur les messages en haut de l'écran (speed-up alterné avec " " + prio plus élevée que le timer stop).
+ok, pas comme ça/ msg : + une deuxième ligne ? (même message, passer NULL si rien).
+ok/ player : skate - anim perso + planche.
+ok/ points quand avance dans le scroll. système ? 50 pts toutes les 2 cases.
+ok/ arrivée sur saut cracker : "nice! 5000 points"
+2 lignes/ org : texte sur 3 lignes : goal in / Good! / 10000 pts
+ok/ death : "Your time is up"
+ok/ pitfall : st = 24 frames entrée / 48 frames attente / 24 frames sortie.
+ok/ pitfall : ajout automatique du monstre pendant le scroll.
+ok/ cracker : ajout automatique du monstre pendant le scroll.
+ok >
+Transition :
+lignes de 8 pixels qui se ferment et s'ouvrent.
+décalage dans la fermeture entre haut et bas.
+sur les lignes du bas, utiliser la couleur du HUD !
+<
+
+
+

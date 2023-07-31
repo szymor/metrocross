@@ -1,0 +1,24 @@
+
+*FR*
+
+Linux / OpenGL :
+
+Sur Linux, j'ai eu un souci qu'apparement d'autres ont eu avant moi (cf les forums). Avec OpenGL, le jeu passe en 640x480 full screen. Et au retour, mauvaise surprise, la résolution reste 640x480 au lieu de revenir à la résolution originale. On s'en tire avec un 'xrandr -s <size x>x<size y>', mais ce n'est pas très agréable.
+
+D'après les infos que j'ai pu trouver, il s'agirait d'un problème lié à xorg. Une solution trouvée sur un forum qui chez moi (Debian 7 Wheezy) a reglé le souci a été de générer le 'xorg.conf'. Après un cold reboot, plus de problème, la résolution revient bien à la résolution originale.
+
+Clément.
+
+---
+
+*EN*
+
+Linux / OpenGL:
+
+I encountered a problem with Linux, apparently met by other users before me (cf forums). Through OpenGL, the game goes 640x480 full screen. When leaving, bad news, the screen resolution doesn't switch back to the original res and remains 640x480. You can bypass the problem with the 'xrandr -s <size x>x<size y>' command, but it's not very user friendly.
+
+From what I gathered here and there, the problem has something to do with xorg. One of the solutions which solved the problem on my distro (Debian 7 Wheezy) was to generate the 'xorg.conf' file. After a cold reboot, no more trouble, the resolution switches back to normal when leaving the game.
+
+Clément.
+
+--- EOF

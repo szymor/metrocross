@@ -1,0 +1,40 @@
+
+*FR*
+
+OpenGL :
+
+Pour ce jeu, j'ai du utiliser OpenGL car le tearing en SDL pur est insupportable. Avec un scrolling lent, ça passe assez inaperçu, mais là non.
+
+Problème, je suis un noob total en OpenGL.
+
+Le timing du jeu est basé sur la V-Sync. Il faut donc que cette dernière soit activée, sinon ça risque d'aller très très vite. Sous les deux configs Linux que j'ai testées, la V-Sync était activée par défaut. Avec mon vieux XP, la carte NVidia propose un panneau de configuration. Pour les autres je ne sais pas...
+
+Il faut aussi que la fréquence de rafraîchissement soit 60 Hz.
+
+C'est aussi pour avoir la V-Sync que le jeu ne tourne qu'en full screen. (En mode fenêtré, il n'y a pas de V-Sync).
+
+Au cas où, il est quand même possible de lancer une version SDL pure en passant '/noGL' en paramètre au programme. Mais ce n'est vraiment pas beau.
+
+Clément.
+
+---
+
+*EN*
+
+OpenGL:
+
+I had to use OpenGL for this game, because I couldn't find any way to get rid of the tearing when using only SDL. It's more or less ok when the scrolling in slow, but here it was unbearable.
+
+Problem, I'm a complete noob with OpenGL.
+
+The game timing is based on the V-Sync. It has then to be activated, otherwise the game might run rather quickly... On the two Linuxes I tried the game on, the V-Sync was on by default. On my old XP, the NVidia card has a control panel through which it is easy to turn the V-Sync on or off. I have no idea what others set ups are like.
+
+The refresh rate should be set at 60 Hz.
+
+It's also due to the need of V-Sync that the game only runs in full screen mode. (There is no V-Sync in windowed mode).
+
+Just in case, there is a way to run a SDL only version by specifying the '/noGL' parameter. You've been warned, the result is ugly.
+
+Clément.
+
+--- EOF
